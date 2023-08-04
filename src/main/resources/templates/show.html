@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>show pdf</title>
+    <script src="/static/js/pdf.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* 添加边框样式 */
+        #pdfViewer canvas {
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body>
+<h1 id="name" th:text="${name}"></h1>
+<h1 id="history" th:text="${history}"></h1>
+<div>
+    <canvas id="pdfCanvas"></canvas>
+</div>
+<div>
+    Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+</div>
+<script>
+    // 设置 PDF.js 的 worker 文件路径
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/static/js/pdf.worker.js';
+
+    // PDF 文件的 URL 和 canvas 元素
+    var name = document.getElementById("name").textContent;
+    var pdfUrl = '/upload/'+name;
+    var canvas = document.getElementById('pdfCanvas');
+    var currentPageNumber =  [[${history}]];
+    //parseInt(document.getElementById("history").textContent);
+    var totalPages = 1;
+    var isRendering = false; // 是否正在渲染中
+    pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDocument) {
+        totalPages = pdfDocument.numPages;
+
+        // 初始化页面
+        function renderPage(pageNumber) {
+            if (isRendering) {
+                // Cancel the ongoing rendering task
+                return;
+            }
+            isRendering = true;
+            pdfDocument.getPage(pageNumber).then(function(page) {
+                var viewport = page.getViewport({ scale: 2 });
+                var canvas = document.getElementById('pdfCanvas'); // 替换anvas 元素
+                var context = canvas.getContext('2d');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+
+                // 渲染页面内容到 Canvas
+                page.render(renderContext).promise.then(function() {
+                    isRendering = false; // 渲染完成
+                    currentPageNumber = pageNumber;
+                    updatePageLabels(currentPageNumber, totalPages);
+                });
+
+            });
+        }
+
+
+
+        // 更新页数标签
+        function updatePageLabels(currentPage, total) {
+            currentPageNumber = currentPage;
+            document.getElementById('currentPage').textContent = currentPage;
+            document.getElementById('totalPages').textContent = total;
+        }
+
+        // 初始化页面
+        renderPage(currentPageNumber);
+
+        // 添加鼠标滚动事件监听
+        canvas.addEventListener('wheel', function(event) {
+            if (event.deltaY > 0 && currentPageNumber < totalPages) {
+                currentPageNumber++;
+                renderPage(currentPageNumber);
+            } else if (event.deltaY < 0 && currentPageNumber > 1) {
+                currentPageNumber--;
+                renderPage(currentPageNumber);
+            }
+            // 阻止默认滚动行为
+            event.preventDefault();
+        });
+    });
+
+    // 定期发送 Ajax 请求
+    function sendPageToServer() {
+        var url = '/getCurrentPage'; // 后端处理请求的 URL
+        var data = {
+            currentPage: currentPageNumber
+        };
+
+        // 使用 jQuery 发起 Ajax 请求
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function(response) {
+                console.log('Page sent successfully:', response);
+            },
+            error: function(error) {
+                console.error('Error sending page:', error);
+            }
+        });
+    }
+
+    // 每隔一段时间调用 sendPageToServer 函数
+    setInterval(sendPageToServer, 1000); // 每 5 秒发送一次
+</script>
+</body>
+</html>

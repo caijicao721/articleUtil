@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul>
+    <li th:each="fileName : ${list}">
+        <a th:href="@{/showPDF/upload/{pdfURL}(pdfURL=${fileName})}" th:text="${fileName}"></a>
+    </li>
+</ul>
+</body>
+</html>
