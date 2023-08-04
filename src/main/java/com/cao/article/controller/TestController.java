@@ -1,9 +1,7 @@
 package com.cao.article.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -79,8 +77,13 @@ public class TestController extends BaseController{
     }
 
 
-
-
+    @GetMapping("/showPDF/{pdfid}")
+    public String show(@PathVariable(name="pdfid") int id){
+        System.out.println(id);
+        req.setAttribute("name","1-s2.0-S2214157X2200627X-main.pdf");
+        req.setAttribute("history",4);
+        return "show";
+    }
 
 
 

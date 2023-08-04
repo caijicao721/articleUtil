@@ -5,6 +5,10 @@ spring:
     password: 123456
     url: jdbc:mysql://localhost/myblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 file:
   upload:
     dir: ${user.dir}/upload

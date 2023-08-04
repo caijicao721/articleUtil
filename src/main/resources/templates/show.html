@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>show pdf</title>
-    <script src="/static/js/pdf.js"></script>
+    <script src="/js/pdf.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* 添加边框样式 */
@@ -23,11 +23,12 @@
 </div>
 <script>
     // 设置 PDF.js 的 worker 文件路径
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/static/js/pdf.worker.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/js/pdf.worker.js';
 
     // PDF 文件的 URL 和 canvas 元素
     var name = document.getElementById("name").textContent;
     var pdfUrl = '/upload/'+name;
+    console.log(pdfUrl);
     var canvas = document.getElementById('pdfCanvas');
     var currentPageNumber =  [[${history}]];
     //parseInt(document.getElementById("history").textContent);
