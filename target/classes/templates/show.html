@@ -45,7 +45,7 @@
             isRendering = true;
             pdfDocument.getPage(pageNumber).then(function(page) {
                 var viewport = page.getViewport({ scale: 2 });
-                var canvas = document.getElementById('pdfCanvas'); // 替换为你的 canvas 元素
+                var canvas = document.getElementById('pdfCanvas'); // 替换anvas 元素
                 var context = canvas.getContext('2d');
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
