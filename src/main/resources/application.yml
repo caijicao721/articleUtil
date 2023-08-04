@@ -3,29 +3,7 @@ spring:
     driver-class-name: com.
     username: root
     password: 123456
-    url: jdbc:p6spy:mysql://localhost/myblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
-  freemarker:
-    settings:
-      classic_compatible: true
-      datetime_format: yyyy-MM-dd HH:mm
-      number_format: 0.##
-  data:
-    elasticsearch:
-      cluster-name: elasticsearch
-      cluster-nodes: localhost:9300
-      repositories:
-        enabled: true
-  rabbitmq:
-    username: guest
-    password: guest
-    host: localhost
-    port: 5672
-mybatis-plus:
-  mapper-locations: classpath*:/mapper/**Mapper.xml
-  redis:
-    host: localhost
-    port: 6379
-    password:
+    url: jdbc:mysql://localhost/myblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
 
 file:
   upload:
