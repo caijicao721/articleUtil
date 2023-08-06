@@ -1,14 +1,18 @@
 spring:
   datasource:
-    driver-class-name: com.
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 123456
-    url: jdbc:mysql://localhost/myblog?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost/articleutil?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=UTC&allowPublicKeyRetrieval=true
 
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+  security:
+    user:
+      name: cjm
+      password: 123456
 file:
   upload:
     dir: ${user.dir}/upload
