@@ -12,4 +12,6 @@ import com.cao.article.entity.User;
  * @Create 2023/8/4 23:26
  */
 public interface UserService extends IService<User> {
+
+    public User findByName(String name);
 }

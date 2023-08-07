@@ -2,11 +2,11 @@ package com.cao.article;
 
 import com.cao.article.entity.User;
 import com.cao.article.mapper.UserMapper;
-import org.junit.Test;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.sql.*;
 
@@ -49,15 +49,6 @@ public class TestClass {
     @Test
     public void test1(){
         System.out.println(userMapper);
-        Date date = new Date(System.currentTimeMillis());
-        User cjm = new User();
-        cjm.setId(1);
-        cjm.setUsername("cjm");
-        cjm.setPassword("123");
-        cjm.setCreateTime(date);
-        cjm.setModifiedTime(date);
-        cjm.setLastLoginTime(date);
-        int insert = userMapper.insert(cjm);
-        System.out.println(insert);
+
     }
 }

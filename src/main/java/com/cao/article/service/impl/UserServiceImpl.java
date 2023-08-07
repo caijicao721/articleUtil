@@ -38,4 +38,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper,User> implements Use
         int insert = userMapper.insert(cjm);
         System.out.println(insert);
     }
+
+    @Override
+    public User findByName(String name){
+        return userMapper.findByName(name);
+    }
 }

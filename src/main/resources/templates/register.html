@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <meta charset="utf-8" >
+    <meta charset="utf-8">
 
     <!--字体图标-->
     <link href="/css/icomoon.css" rel="stylesheet" />
@@ -13,7 +13,7 @@
     <link href="/css/skin/tina.css" rel="stylesheet" />
     <!--jquery，不可修改版本-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>后台管理</title>
+    <title>注册系统</title>
     <style>
         .bg-wrap, body, html {height: 100%;}
         input{line-height: normal;-webkit-appearance: textfield;background-color: white;-webkit-rtl-ordering: logical;cursor: text;padding: 1px;border-width: 2px;border-style: inset;border-color: initial;border-image: initial;}
@@ -25,57 +25,63 @@
         .form-title{margin-bottom: 40px;}
         .form-title>span{font-size: 20px;color: #2589ff;}
         .form-item{margin-bottom: 30px;position: relative;height: 40px;line-height: 40px;border-bottom: 1px solid #e3e3e3;box-sizing: border-box;}
-        .form-txt{display: inline-block;width: 70px;color: #595961;font-size: 14px;margin-right: 10px;}
+        .form-txt{display: inline-block;width: 100px;color: #595961;font-size: 14px;margin-right: 10px;}
         .form-input{border: 0;outline: 0;font-size: 14px;color: #595961;width: 155px;}
         .form-btn{margin-top: 40px;}
         .ui-button{display: block;width: 320px;height: 50px;text-align: center;color: #fff;background: #2589ff;border-radius: 6px;font-size: 16px;border: 0;outline: 0;}
-        .login-result {color: red;}
+        .register-Result {color: red;}
     </style>
 </head>
 <body>
 <div class="bg-wrap">
     <div class="main-cont-wrap login-model">
-        <form id="login-form">
+        <form id="login-form" action="/register" method="post">
             <div class="form-title">
-                <span>文献阅读辅助系统</span>
+                <span>请注册你的账户</span>
             </div>
             <div class="form-item">
-                <span class="form-txt">账号：</span>
+                <span class="form-txt">请输入用户名：</span>
                 <input type="text" class="form-input original" id="username" name="loginName" placeholder="请输入账号" data-type="必填" error-pos="32" required />
             </div>
             <div class="form-item">
-                <span class="form-txt">密码：</span>
+                <span class="form-txt">请输入密码：</span>
                 <input type="password" class="form-input original" name="password" id="password" placeholder="请输入密码" data-type="必填" error-pos="32" required/>
             </div>
+            <div class="form-item">
+                <span class="form-txt">再次输入密码：</span>
+                <input type="password" class="form-input original" name="password" id="confirm-password" placeholder="请输入密码" data-type="必填" error-pos="32" required/>
+            </div>
             <div class="form-btn">
-                <input type="button" class="ui-button" id="save" value="登录"/>
+                <input type="button" class="ui-button" id="save" value="注册"/>
             </div>
         </form>
-        <p>Don't have an account? <a href="/register">Register</a></p>
-        <p><div id="loginResult" class="login-result" th:text="${loginResult}"></div></p>
+        <p><div id="registerResult" class="register-Result" ></div></p>
     </div>
 
     <script type="text/javascript">
-            $(document).ready(function () {
+        $(document).ready(function () {
             $("#save").on("click", function () {
                 var username = $("#username").val();
                 var password = $("#password").val();
+                var confirmPassword = $("#confirm-password").val();
                 console.log("Username: " + username);
                 console.log("Password: " + password);
-                $.post("/doLogin", { "username": username, "password": password }, function (result) {
+                console.log("confirm-password: " + confirmPassword);
+                $.post("/doRegister", { "username": username, "password": password ,"confirmPassword":confirmPassword}, function (result) {
                     console.log(result);
-                    var size = document.getElementById("loginResult").textContent.length;
-                    console.log(document.getElementById("loginResult").textContent);
-                    if (size <= 0) {
+                    if (result.status === 0) {
+                        alert("注册成功")
                         // 登录成功，跳转到首页
-                        window.location.href = "/index";
+                        window.location.href = "/login";
                     } else {
                         // 显示登录失败信息
-                        $("#loginResult").text("Incorrect username or password.");
+                        $("#registerResult").text(result.msg);
                     }
                 });
             });
         });
+
+
     </script>
 </div>
 </body>

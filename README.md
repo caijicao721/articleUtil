@@ -10,3 +10,7 @@
 + 自己定义了webMvcConfigure后，需要自己配置静态资源的目录，需要看下原理
 + multipart上传文件的大小是有限制的，需要自己配置更大的大小
 + mybatis-plus 需要指定mapper路径 @MapperScan
++ security结合JDBC的验证，默认返回html，需要配置返回json
++ mybatis需要配置主键的id
++ test要用spring的test单元，junit的不行
++ 

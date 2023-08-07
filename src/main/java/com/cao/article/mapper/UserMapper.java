@@ -16,4 +16,6 @@ import org.springframework.stereotype.Repository;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
+
+    User findByName(String name);
 }

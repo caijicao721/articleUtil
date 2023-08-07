@@ -1,5 +1,7 @@
 package com.cao.article.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,9 +22,12 @@ import java.util.Date;
 @Accessors(chain = true)
 public class Article{
 
+    @TableId(type = IdType.AUTO)
     public int id;
 
-    public String uploadUser;
+    public String name;
+
+    public String issueName;
 
     public int historyPageNum;
 
