@@ -19,6 +19,7 @@ CREATE TABLE `issue`(
                         `name` VARCHAR(30) NOT NULL,
                         `create_time` DATETIME NOT NULL,
                         `modified_time` DATETIME NOT NULL,
+                        `article_count` INT DEFAULT 0,
                         PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 

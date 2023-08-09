@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cao.article.common.Result;
 import com.cao.article.entity.Article;
+import com.cao.article.entity.Issue;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,6 +79,7 @@ public class ArticleController extends BaseController{
         ExecutorService executorService = new ThreadPoolExecutor(5,10,100, TimeUnit.SECONDS,
                 new ArrayBlockingQueue<>(10), Executors.defaultThreadFactory(),new ThreadPoolExecutor.CallerRunsPolicy());
         int size = files.length;
+        int count = 0;
         String issueName = (String)httpSession.getAttribute("issueName");
         List<Article> issuelist = articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName));
         Set<String> collect = issuelist.stream().map(Article::getName).collect(Collectors.toSet());
@@ -96,7 +98,8 @@ public class ArticleController extends BaseController{
             article.setHistoryPageNum(1);
             article.setViewCount(0);
             list.add(article);
-            System.out.println(article);
+            count++;
+            logger.info(article.toString());
             executorService.execute(()->{
                 File dest = new File(filePath + "\\"+ file.getOriginalFilename());
                 if (!dest.getParentFile().exists()){
@@ -117,12 +120,20 @@ public class ArticleController extends BaseController{
         countDownLatch.await();
         executorService.shutdown();
         long e = System.currentTimeMillis();
-        articleService.saveBatch(list);
-        List<Article> issueList = articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName));
-        List<String> list1 = issueList.stream().map(Article::getName).collect(Collectors.toList());
-        logger.info(String.valueOf(list1));
-        req.setAttribute("list",list1);
+        if (count!=0){
+            boolean b = articleService.saveBatch(list);
+            Issue issue = issueService.getOne(new QueryWrapper<Issue>().eq("name", issueName));
+            issue.setArticleCount(issue.getArticleCount()+count);
+            boolean save = issueService.updateById(issue);
+            logger.info(String.valueOf(save));
+            if (!b||!save){
+                return "error";
+            }
+        }
         logger.info("消耗时间为"+(e-s)+"ms");
+        List<Article> issueList = articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName));
+        req.setAttribute("list",issueList);
+        logger.info(String.valueOf(issueList));
         return "issuePage";
 
     }
@@ -142,6 +153,23 @@ public class ArticleController extends BaseController{
         article.setViewCount(article.getViewCount()+1);
         articleService.updateById(article);
         req.setAttribute("history",article.getHistoryPageNum());
+        req.setAttribute("currentIssueName",issueName);
+        logger.info("当前issue"+issueName);
         return "show";
+    }
+
+    @ResponseBody
+    @GetMapping("/article/delete/{id}")
+    public Result deleteArticle(@PathVariable int id){
+        List<Article> list = articleService.list(new QueryWrapper<Article>().eq("id", id));
+        if (list.size()==0){
+            return Result.fail("该文章不存在");
+        }
+        boolean b = articleService.removeById(id);
+        if (b){
+            return Result.success();
+        }else{
+            return Result.fail("删除失败，请重试！");
+        }
     }
 }

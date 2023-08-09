@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 /**
  * ClassName: TestController
@@ -35,15 +35,16 @@ public class IndexController extends BaseController{
         currentUser.setLastLoginTime(date);
         userService.updateById(currentUser);
         List<Issue> list = issueService.list(new QueryWrapper<Issue>().eq("author",currentUser.username));
-        List<String> collect = list.stream().map(Issue::getName).collect(Collectors.toList());
-        req.setAttribute("issueList",collect);
-        System.out.println(collect);
+        req.setAttribute("issueList",list);
         return "index";
     }
 
 
 
-
+    @GetMapping({"/error"})
+    public String error(){
+        return "error";
+    }
 
 
 

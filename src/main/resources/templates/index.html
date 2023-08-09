@@ -3,77 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <!--字体图标-->
-    <link href="/css/icomoon.css" rel="stylesheet" />
-    <!--动画-->
-    <link href="/css/animate.css" rel="stylesheet" />
-    <!--骨架样式-->
-    <link href="/css/common.css" rel="stylesheet" />
-    <!--皮肤（缇娜）-->
-    <link href="/css/skin/tina.css" rel="stylesheet" />
-    <!--jquery，不可修改版本-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>论文列表</title>
-    <style>
-        .bg-wrap, body, html {height: 100%;}
-        input{line-height: normal;-webkit-appearance: textfield;background-color: white;-webkit-rtl-ordering: logical;cursor: text;padding: 1px;border-width: 2px;border-style: inset;border-color: initial;border-image: initial;}
-        input, button{text-rendering: auto;color: initial;letter-spacing: normal;word-spacing: normal;text-transform: none;text-indent: 0px;text-shadow: none;display: inline-block;text-align: start;margin: 0em;font: 400 13.3333px Arial;}
-        input[type=button]{-webkit-appearance: button;cursor: pointer;}
-        .bg-wrap {position: relative;background-size: cover;overflow: hidden;}
-        .main-cont-wrap{z-index: 1;position: absolute;top: 30%;left: 50%;margin-left: -190px;margin-top: -255px;box-sizing: border-box;width: 380px;padding: 30px 30px 40px;background: #fff;box-shadow: 0 20px 30px 0 rgba(63,63,65,.06);border-radius: 10px;}
-        .form-title{margin-bottom: 40px;}
-        .form-title>span{font-size: 20px;color: #2589ff;}
-        .form-item{margin-bottom: 30px;position: relative;height: 40px;line-height: 40px;border-bottom: 1px solid #e3e3e3;box-sizing: border-box;}
-        .form-txt{display: inline-block;width: 120px;color: #595961;font-size: 14px;margin-right: 10px;}
-        .li-text{font-size: 20px;color: #2589ff;}
-        .form-input{border: 0;outline: 0;font-size: 14px;color: #595961;width: 155px;}
-        .form-btn{margin-top: 40px;}
-        .ui-button{display: block;width: 320px;height: 50px;text-align: center;color: #fff;background: #2589ff;border-radius: 6px;font-size: 16px;border: 0;outline: 0;}
-        .register-Result {color: red;}
-    </style>
+
 </head>
 <body>
 
-    <a class = "form-txt" href="/edit" >修改用户名</a>
+    <a class = "form-txt" href="/edit" >修改用户</a>
     <a class = "form-txt" id = "logout" href="/logout">退出登录</a>
-    <ul>
-        <li  class = "li-text" th:each="issuename : ${issueList}">
-            <a class = "li-text" th:href="@{/showIssue/{issueName}(issueName=${issuename})}" th:text="${issuename}"></a>
-        </li>
-    </ul>
-    <div class="bg-wrap">
-        <div class="main-cont-wrap login-model">
-            <form id="login-form"  method="post">
-                <div class="form-title">
-                    <span>添加论文</span>
-                </div>
-                <div class="form-item">
-                    <span class="form-txt">请输入论文名称：</span>
-                    <input type="text" class="form-input original" id="issueName" name="issueName" placeholder="请输入名称" data-type="必填" error-pos="32" required />
-                </div>
-                <div class="form-btn">
-                    <input type="button" class="ui-button" id="save" value="添加"/>
-                </div>
-            </form>
-            <p><div id="registerResult" class="register-Result" ></div></p>
-        </div>
-    </div>
+    <a class = "form-txt" href="/issue-add">添加论文</a>
+    <table border="1">
+        <tr>
+            <th>论文名称</th>
+            <th>已有文献数量</th>
+            <th>创建时间</th>
+            <th>修改时间</th>
+            <th>更改名称</th>
+            <th>删除论文</th>
+        </tr>
+        <!-- 使用Thymeleaf的循环来渲染表格行 -->
+        <tr th:each="issue : ${issueList}">
+            <td>
+                <a th:href="@{/showIssue/{issueName}(issueName=${issue.name})}" th:text="${issue.name}"></a>
+            </td>
+            <td th:text="${issue.articleCount}"></td>
+
+            <td th:text="${#dates.format(issue.createTime, 'yyyy-MM-dd')}"></td>
+            <td th:text="${#dates.format(issue.modifiedTime, 'yyyy-MM-dd')}"></td>
+            <td>
+                <button th:attr="data-id=${issue.id}" class="edit-button">更改名称</button>
+            </td>
+            <td>
+                <button th:attr="data-id=${issue.id}" class="delete-button">删除</button>
+            </td>
+        </tr>
+    </table>
 
 
-    <script type="text/javascript">
+
+
+    <script>
+
+        // todo 完善更新功能
         $(document).ready(function () {
-            $("#save").on("click", function () {
-                var issueName = $("#issueName").val();
-                console.log("issueName: " + issueName);
-                $.post("/issue/add", { "issueName": issueName}, function (result) {
-                    console.log(result);
-                    alert(result.msg);
-                    window.location.href="/index";
-                });
+            $(".edit-button").on("click", function () {
+                var issueId = $(this).data("id");
+
+                // 执行Ajax请求
+                $.post("/issue/edit/" + issueId,  // 后端处理请求的URL
+                    {issueName:issueName},
+                    function(result) {
+                        console.log(result);
+                        // 在成功回调函数中执行相应操作
+                        // 例如：更新页面内容、弹出模态框等
+                        if (result.status === 0){
+                            alert("删除成功");
+                        }else{
+                            alert(result.msg);
+                        }
+                        location.reload();
+                    });
             });
         });
 
+        $(document).ready(function () {
+            $(".delete-button").on("click", function () {
+                var issueId = $(this).data("id");
 
+                // 执行Ajax请求
+                $.get("/issue/delete/" + issueId,  // 后端处理请求的URL
+                    function(result) {
+                        console.log(result);
+                        // 在成功回调函数中执行相应操作
+                        // 例如：更新页面内容、弹出模态框等
+                        if (result.status === 0){
+                            alert("删除成功");
+                        }else{
+                            alert(result.msg);
+                        }
+                        location.reload();
+                    });
+            });
+        });
     </script>
 </body>
 </html>

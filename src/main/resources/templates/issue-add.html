@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加论文</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .bg-wrap, body, html {height: 100%;}
+        input{line-height: normal;-webkit-appearance: textfield;background-color: white;-webkit-rtl-ordering: logical;cursor: text;padding: 1px;border-width: 2px;border-style: inset;border-color: initial;border-image: initial;}
+        input[type="text"], input[type="password"]{border: 0;outline: 0;}
+        input, button{text-rendering: auto;color: initial;letter-spacing: normal;word-spacing: normal;text-transform: none;text-indent: 0px;text-shadow: none;display: inline-block;text-align: start;margin: 0em;font: 400 13.3333px Arial;}
+        input[type=button]{-webkit-appearance: button;cursor: pointer;}
+        .bg-wrap {position: relative;background-size: cover;overflow: hidden;}
+        .main-cont-wrap{z-index: 1;position: absolute;top: 50%;left: 50%;margin-left: -190px;margin-top: -255px;box-sizing: border-box;width: 380px;padding: 30px 30px 40px;background: #fff;box-shadow: 0 20px 30px 0 rgba(63,63,65,.06);border-radius: 10px;}
+        .form-title{margin-bottom: 40px;}
+        .form-title>span{font-size: 20px;color: #2589ff;}
+        .form-item{margin-bottom: 30px;position: relative;height: 40px;line-height: 40px;border-bottom: 1px solid #e3e3e3;box-sizing: border-box;}
+        .form-txt{display: inline-block;width: 70px;color: #595961;font-size: 14px;margin-right: 10px;}
+        .form-input{border: 0;outline: 0;font-size: 14px;color: #595961;width: 155px;}
+        .form-btn{margin-top: 40px;}
+        .ui-button{display: block;width: 320px;height: 50px;text-align: center;color: #fff;background: #2589ff;border-radius: 6px;font-size: 16px;border: 0;outline: 0;}
+    </style>
+</head>
+<body>
+<div class="bg-wrap">
+    <div class="main-cont-wrap login-model">
+        <form id="login-form"  method="post">
+            <div class="form-title">
+                <span>添加论文</span>
+            </div>
+            <div class="form-item">
+                <span class="form-txt">请输入论文名称：</span>
+                <input type="text" class="form-input original" id="issueName" name="issueName" placeholder="请输入名称" data-type="必填" error-pos="32" required />
+            </div>
+            <div class="form-btn">
+                <input type="button" class="ui-button" id="save" value="添加"/>
+            </div>
+        </form>
+        <p><div id="registerResult" class="register-Result" ></div></p>
+    </div>
+</div>
+    <script type="text/javascript">
+            $(document).ready(function () {
+            $("#save").on("click", function () {
+                var issueName = $("#issueName").val();
+                console.log("issueName: " + issueName);
+                $.post("/issue/add", { "issueName": issueName}, function (result) {
+                    console.log(result);
+                    alert(result.msg);
+                    window.location.href="/index";
+                });
+            });
+        });
+    </script>
+</body>
+</html>

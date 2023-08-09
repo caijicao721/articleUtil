@@ -13,15 +13,22 @@
     </style>
 </head>
 <body>
-<h1 id="name" th:text="${name}"></h1>
+<div>
+    <span id="name" th:text="${name}"></span>
+</div>
 <div>
     Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+    <a th:href="@{/showIssue/{issueName}(issueName=${currentIssueName})}">
+        <button>返回</button>
+    </a>
+
 </div>
 <div>
     <canvas id="pdfCanvas"></canvas>
 </div>
 
 <script>
+
     // 设置 PDF.js 的 worker 文件路径
     pdfjsLib.GlobalWorkerOptions.workerSrc = '/js/pdf.worker.js';
 
@@ -109,7 +116,7 @@
     }
 
     // 每隔一段时间调用 sendPageToServer 函数
-    setInterval(sendPageToServer, 1000); // 每 5 秒发送一次
+    setInterval(sendPageToServer, 30000); // 每 5 秒发送一次
 
     function sendTotalPageToServer() {
         $.post("/setTotalPage", {"totalPage": totalPages}, function (result) {

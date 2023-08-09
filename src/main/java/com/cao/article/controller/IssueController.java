@@ -1,5 +1,6 @@
 package com.cao.article.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cao.article.common.Result;
 import com.cao.article.entity.Article;
@@ -27,11 +28,16 @@ import java.util.stream.Collectors;
 public class IssueController extends BaseController{
 
 
+    @GetMapping("/issue-add")
+    public String toIssueAdd(){
+        return "issue-add";
+    }
+
     @GetMapping("/showIssue/{issueName}")
     public String showIssue(@PathVariable(name="issueName") String name){
         List<Article> list = articleService.list(new QueryWrapper<Article>().eq("issue_name", name));
         List<String> collect = list.stream().map(Article::getName).collect(Collectors.toList());
-        req.setAttribute("list",collect);
+        req.setAttribute("list",list);
         httpSession.setAttribute("issueName",name);
         return "issuePage";
     }
@@ -39,6 +45,9 @@ public class IssueController extends BaseController{
     @ResponseBody
     @PostMapping("/issue/add")
     public Result add(String issueName){
+        if (!StrUtil.isNotBlank(issueName)||"".equals(issueName)){
+            return Result.fail("论文名称不能为空！");
+        }
         User currentUser = super.getCurrentUser();
         List<Issue> name = issueService.list(new QueryWrapper<Issue>().eq("name", issueName));
         if (name.size()!=0){
@@ -57,5 +66,23 @@ public class IssueController extends BaseController{
             return Result.fail("添加失败");
         }
 
+    }
+
+    @ResponseBody
+    @GetMapping("/issue/delete/{issueId}")
+    public Result deleteIssue(@PathVariable int issueId){
+        Issue issue = issueService.getOne(new QueryWrapper<Issue>().eq("id", issueId));
+        String issueName = issue.getName();
+        boolean remove = articleService.removeByIds(articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName))
+                .stream().map(Article::getId).collect(Collectors.toList()));
+        if (!remove){
+            return Result.fail("文章删除失败！请重试");
+        }
+        boolean b = issueService.removeById(issueId);
+        if (b){
+            return Result.success();
+        }else{
+            return Result.fail("论文删除失败！请重试");
+        }
     }
 }

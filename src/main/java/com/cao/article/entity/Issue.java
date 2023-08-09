@@ -32,4 +32,6 @@ public class Issue {
 
     public Date modifiedTime;
 
+    public int articleCount;
+
 }
