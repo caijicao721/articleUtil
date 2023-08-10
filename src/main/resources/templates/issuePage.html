@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>文献列表</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -20,6 +20,8 @@
         <tr>
             <th>文献名称</th>
             <th>浏览量</th>
+            <th>上传时间</th>
+            <th>上次浏览时间</th>
             <th>操作</th>
         </tr>
         <!-- 使用Thymeleaf的循环来渲染表格行 -->
@@ -27,13 +29,19 @@
             <td>
                 <a th:href="@{/showPDF/{pdfURL}(pdfURL=${article.name})}" th:text="${article.name}"></a>
             </td>
+
             <td th:text="${article.viewCount}"></td>
+            <td th:text="${#dates.format(article.uploadTime, 'yyyy-MM-dd')}"></td>
+            <td th:text="${#strings.isEmpty(article.lastViewTime) ? '暂无信息' : #dates.format(article.lastViewTime, 'yyyy-MM-dd')}"></td>
             <td>
                 <button th:attr="data-id=${article.id}" class="del-button">删除</button>
             </td>
         </tr>
     </table>
-
+    <p>浏览排行榜</p>
+    <ul th:each="article : ${session.articleRank}">
+        <li th:text="${article.name}"></li>
+    </ul>
     <script type="text/javascript">
         $(document).ready(function () {
             $(".del-button").on("click", function () {
@@ -47,10 +55,10 @@
                         // 例如：更新页面内容、弹出模态框等
                         if (result.status === 0){
                             alert("删除成功");
+                            location.href = "/showIssue/"+result.msg;
                         }else{
                             alert(result.msg);
                         }
-                        location.reload();
                 });
             });
         });

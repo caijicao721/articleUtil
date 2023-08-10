@@ -19,19 +19,21 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Issue {
 
     @TableId(type = IdType.AUTO)
-    public int id;
+    private int id;
 
-    public String author;
+    private String author;
 
-    public String name;
+    private String name;
 
-    public Date createTime;
+    private Date createTime;
 
-    public Date modifiedTime;
+    private Date modifiedTime;
 
-    public int articleCount;
+    private int articleCount;
 
 }

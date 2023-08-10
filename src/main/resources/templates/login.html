@@ -13,7 +13,7 @@
     <link href="/css/skin/tina.css" rel="stylesheet" />
     <!--jquery，不可修改版本-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>后台管理</title>
+    <title>文献辅助阅读</title>
     <style>
         .bg-wrap, body, html {height: 100%;}
         input{line-height: normal;-webkit-appearance: textfield;background-color: white;-webkit-rtl-ordering: logical;cursor: text;padding: 1px;border-width: 2px;border-style: inset;border-color: initial;border-image: initial;}
@@ -53,6 +53,7 @@
         </form>
         <p>Don't have an account? <a href="/register">Register</a></p>
         <p><div id="loginResult" class="login-result" th:text="${loginResult}"></div></p>
+        <p><div th:text="${session.message}"></div></p>
     </div>
 
     <script type="text/javascript">

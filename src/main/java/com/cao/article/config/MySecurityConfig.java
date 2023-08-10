@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class MySecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    FailLoginHandler failLoginHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -30,6 +32,9 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 //如果URL为loginPage,则用SpringSecurity中自带的过滤器去处理该请求
                 .loginProcessingUrl("/doLogin")
+                .failureHandler(failLoginHandler)
+                .failureForwardUrl("/login")
+                .failureUrl("/login")
                 .defaultSuccessUrl("/index")
                 .and()
                 //请求授权

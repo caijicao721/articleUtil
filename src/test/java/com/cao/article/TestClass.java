@@ -1,5 +1,7 @@
 package com.cao.article;
 
+import com.cao.article.common.IssueRank;
+import com.cao.article.entity.Issue;
 import com.cao.article.entity.User;
 import com.cao.article.mapper.UserMapper;
 
@@ -9,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.sql.*;
+import java.util.List;
 
 /**
  * ClassName: TestClass
@@ -18,7 +21,7 @@ import java.sql.*;
  * @version 1.0
  * @Create 2023/8/4 20:49
  */
-@SpringBootTest
+//@SpringBootTest
 public class TestClass {
 
     @Autowired
@@ -49,6 +52,13 @@ public class TestClass {
     @Test
     public void test1(){
         System.out.println(userMapper);
+
+    }
+
+
+
+    @Test
+    public void test2(){
 
     }
 }

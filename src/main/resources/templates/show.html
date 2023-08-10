@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>show pdf</title>
+    <title>阅读器</title>
     <script src="/js/pdf.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
@@ -14,10 +14,10 @@
 </head>
 <body>
 <div>
-    <span id="name" th:text="${name}"></span>
+    目前正在浏览文章：<span id="name" th:text="${name}"></span>
 </div>
 <div>
-    Current Page: <span id="currentPage"></span> / <span id="totalPages"></span>
+    当前页码: <span id="currentPage"></span> / 总页码: <span id="totalPages"></span>
     <a th:href="@{/showIssue/{issueName}(issueName=${currentIssueName})}">
         <button>返回</button>
     </a>

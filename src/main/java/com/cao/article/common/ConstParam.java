@@ -21,4 +21,6 @@ public class ConstParam {
     public String getUploadDir(){
         return uploadDir;
     }
+
+    public static final int CACHE_SIZE = 3;
 }

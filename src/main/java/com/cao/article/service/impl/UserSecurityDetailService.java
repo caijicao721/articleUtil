@@ -1,7 +1,9 @@
 package com.cao.article.service.impl;
 
+import com.cao.article.common.MyLogger;
 import com.cao.article.entity.User;
 import com.cao.article.mapper.UserMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,11 +33,13 @@ public class UserSecurityDetailService implements UserDetailsService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    Logger logger = MyLogger.getLogger();
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.findByName(username);
         //user=null;
-        System.out.println(user+"查询了该用户");
+        logger.info(user+"查询了该用户");
         if (user == null){
             throw new UsernameNotFoundException("用户不存在");
         }

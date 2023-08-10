@@ -21,7 +21,7 @@ public class ArticleUtilApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext ioc = SpringApplication.run(ArticleUtilApplication.class, args);
         for (String name : ioc.getBeanDefinitionNames()) {
-            System.out.println(name);
+            //System.out.println(name);
         }
         System.out.println("http://localhost:8080");
     }

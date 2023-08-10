@@ -1,5 +1,6 @@
 package com.cao.article.entity;
 
+import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -23,20 +25,20 @@ import java.util.Date;
 public class Article{
 
     @TableId(type = IdType.AUTO)
-    public int id;
+    private int id;
 
-    public String name;
+    private String name;
 
-    public String issueName;
+    private String issueName;
 
-    public int historyPageNum;
+    private int historyPageNum;
 
-    public int totalPageNum;
+    private int totalPageNum;
 
-    public Date uploadTime;
+    private Date uploadTime;
 
-    public Date lastViewTime;
+    private Date lastViewTime;
 
-    public int viewCount;
+    private int viewCount;
 
 }

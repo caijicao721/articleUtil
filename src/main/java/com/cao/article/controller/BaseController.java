@@ -2,7 +2,10 @@ package com.cao.article.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.cao.article.common.ArticleRank;
 import com.cao.article.common.ConstParam;
+import com.cao.article.common.IssueRank;
+import com.cao.article.common.MyLogger;
 import com.cao.article.entity.User;
 import com.cao.article.service.ArticleService;
 import com.cao.article.service.IssueService;
@@ -41,7 +44,7 @@ public class BaseController {
     @Autowired
     HttpSession httpSession;
 
-    Logger logger =  LoggerFactory.getLogger(BaseController.class);
+    protected Logger logger = MyLogger.getLogger();
 
     @Autowired
     ArticleService articleService;
@@ -54,6 +57,12 @@ public class BaseController {
 
     @Autowired
     UserSecurityDetailService userSecurityDetailService;
+
+    @Autowired
+    ArticleRank articleRank;
+
+    @Autowired
+    IssueRank issueRank;
 
     public User getCurrentUser(){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

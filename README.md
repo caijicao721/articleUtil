@@ -13,4 +13,5 @@
 + security结合JDBC的验证，默认返回html，需要配置返回json
 + mybatis需要配置主键的id
 + test要用spring的test单元，junit的不行
-+ 
++ 数据表设计有问题，应该用id来定位，而不是user的名称与论文的名称，会导致连锁更新。有时间应该修改
++ 连接数据库不要添加时区信息

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -34,8 +35,11 @@ public class IndexController extends BaseController{
         Date date = new Date(System.currentTimeMillis());
         currentUser.setLastLoginTime(date);
         userService.updateById(currentUser);
-        List<Issue> list = issueService.list(new QueryWrapper<Issue>().eq("author",currentUser.username));
+        List<Issue> list = issueService.list(new QueryWrapper<Issue>().eq("author",currentUser.getUsername()));
         req.setAttribute("issueList",list);
+        List set = issueRank.getList(currentUser.getUsername());
+        httpSession.setAttribute("issueRank",issueRank.getList(currentUser.getUsername()));
+        logger.info(set.toString());
         return "index";
     }
 

@@ -2,7 +2,9 @@ package com.cao.article.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cao.article.common.Result;
+import com.cao.article.entity.Issue;
 import com.cao.article.entity.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -51,7 +53,12 @@ public class UserController extends BaseController{
                           .setPassword(password)
                                   .setModifiedTime(date);
                 boolean b = userService.updateById(updateUser);
-                if (b){
+                List<Issue> issueList = issueService.list(new QueryWrapper<Issue>().eq("author", name));
+                issueList.forEach((issue) ->{
+                    issue.setAuthor(username);
+                });
+                boolean b1 = issueService.updateBatchById(issueList);
+                if (b&&b1){
                     return Result.success();
                 }else{
                     return Result.fail("修改失败！");

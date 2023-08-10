@@ -1,5 +1,6 @@
 package com.cao.article.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cao.article.common.Result;
@@ -11,8 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -76,17 +77,17 @@ public class ArticleController extends BaseController{
         long s = System.currentTimeMillis();
         List<Article> list = new ArrayList<>();
         Date date = new Date(s);
-        ExecutorService executorService = new ThreadPoolExecutor(5,10,100, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(10), Executors.defaultThreadFactory(),new ThreadPoolExecutor.CallerRunsPolicy());
+        ExecutorService executorService = new ThreadPoolExecutor(10,11,100, TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(100), Executors.defaultThreadFactory(),new ThreadPoolExecutor.CallerRunsPolicy());
         int size = files.length;
         int count = 0;
         String issueName = (String)httpSession.getAttribute("issueName");
         List<Article> issuelist = articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName));
         Set<String> collect = issuelist.stream().map(Article::getName).collect(Collectors.toSet());
         CountDownLatch countDownLatch = new CountDownLatch(size);
-        for (MultipartFile file:files){
-            if (collect.contains(file.getOriginalFilename())|| "".equals(file.getOriginalFilename())
-                || !StrUtil.isNotBlank(file.getOriginalFilename())){
+        for (MultipartFile file:files) {
+            if (collect.contains(file.getOriginalFilename()) || "".equals(file.getOriginalFilename())
+                    || !StrUtil.isNotBlank(file.getOriginalFilename())) {
                 countDownLatch.countDown();
                 continue;
             }
@@ -115,16 +116,21 @@ public class ArticleController extends BaseController{
                 }
 
             });
-
         }
         countDownLatch.await();
-        executorService.shutdown();
+        executorService.shutdownNow();
         long e = System.currentTimeMillis();
         if (count!=0){
             boolean b = articleService.saveBatch(list);
+            for (Article article:list){
+                articleRank.addArticle(issueName,article);
+                httpSession.setAttribute("articleRank",articleRank.getRank(issueName));
+            }
             Issue issue = issueService.getOne(new QueryWrapper<Issue>().eq("name", issueName));
             issue.setArticleCount(issue.getArticleCount()+count);
+            issue.setModifiedTime(date);
             boolean save = issueService.updateById(issue);
+            issueRank.put(getCurrentUser().getUsername(),issue);
             logger.info(String.valueOf(save));
             if (!b||!save){
                 return "error";
@@ -132,6 +138,7 @@ public class ArticleController extends BaseController{
         }
         logger.info("消耗时间为"+(e-s)+"ms");
         List<Article> issueList = articleService.list(new QueryWrapper<Article>().eq("issue_name", issueName));
+
         req.setAttribute("list",issueList);
         logger.info(String.valueOf(issueList));
         return "issuePage";
@@ -149,9 +156,13 @@ public class ArticleController extends BaseController{
                         .eq("issue_name",issueName)
         );
         Date date = new Date(System.currentTimeMillis());
+        logger.info("当前时间为："+date);
+        articleRank.delArticle(issueName,article);
         article.setLastViewTime(date);
         article.setViewCount(article.getViewCount()+1);
         articleService.updateById(article);
+        articleRank.addArticle(issueName,articleService.getById(article.getId()));
+        httpSession.setAttribute("articleRank",articleRank.getRank(issueName));
         req.setAttribute("history",article.getHistoryPageNum());
         req.setAttribute("currentIssueName",issueName);
         logger.info("当前issue"+issueName);
@@ -161,13 +172,24 @@ public class ArticleController extends BaseController{
     @ResponseBody
     @GetMapping("/article/delete/{id}")
     public Result deleteArticle(@PathVariable int id){
-        List<Article> list = articleService.list(new QueryWrapper<Article>().eq("id", id));
-        if (list.size()==0){
+        Article article = articleService.getOne(new QueryWrapper<Article>().eq("id", id));
+        if (article==null){
             return Result.fail("该文章不存在");
         }
+        String issueName = (String)httpSession.getAttribute("issueName");
         boolean b = articleService.removeById(id);
-        if (b){
-            return Result.success();
+        Date date = new Date(System.currentTimeMillis());
+        Issue issue = issueService.getOne(new QueryWrapper<Issue>().eq("name", issueName));
+        issue.setArticleCount(issue.getArticleCount()-1);
+        issue.setModifiedTime(date);
+        issueRank.put(getCurrentUser().getUsername(),issue);
+        boolean b1 = issueService.updateById(issue);
+        if (b&&b1){
+            articleRank.delArticle(issueName,article);
+            httpSession.setAttribute("articleRank",articleRank.getRank(issueName));
+            //File file = new File(constParam.getUploadDir()+article.getName());
+            //FileUtil.del(file);
+            return Result.success(issueName,null);
         }else{
             return Result.fail("删除失败，请重试！");
         }

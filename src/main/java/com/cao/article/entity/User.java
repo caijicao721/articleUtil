@@ -22,15 +22,15 @@ import java.util.Date;
 public class User {
 
     @TableId(type = IdType.AUTO)
-    public int id;
+    private int id;
 
-    public String username;
+    private String username;
 
-    public String password;
+    private String password;
 
-    public Date createTime;
+    private Date createTime;
 
-    public Date modifiedTime;
+    private Date modifiedTime;
 
-    public Date lastLoginTime;
+    private Date lastLoginTime;
 }
